@@ -1,32 +1,73 @@
 ---
+
 - debug:
     msg: "Check to see if EULA variables are accepted"
   failed_when: (end_user_license_aggreement_consent_server != "Y" )or (end_user_license_aggreement_consent_cli != "YES")
 
-- name: Import the MSFT gpg key
-  rpm_key:
+- name: Check if EPEL repository is already installed
+  shell: rpm -q epel-release
+  register: epel_installed
+  ignore_errors: yes
+
+- name: Install EPEL repository public key
+  become: yes
+  command: rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
+  when: epel_installed.rc != 0
+  tags:
+    - epel
+
+- name: Install EPEL repository
+  when: epel_installed.rc != 0
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
     state: present
-    key: https://packages.microsoft.com/keys/microsoft.asc
+  tags:
+    - epel
 
-- name: Add the MsSQL server repo
-  yum_repository:
-    name: mssql
-    description: Microsoft SQL repo
-    file: /etc/yum.repos.d/mssql-server.repo
-    baseurl: https://packages.microsoft.com/config/rhel/8/mssql-server-2022.repo
-    gpgkey: https://packages.microsoft.com/keys/microsoft.asc
-    gpgcheck: yes
+- name: Microsoft SQL Repository
+  become: yes
+  command: curl -o /etc/yum.repos.d/mssql-server.repo https://packages.microsoft.com/config/rhel/8/mssql-server-2022.repo
 
-- name: Add MsSQL command line tools repo
-  yum_repository:
-    name: mssql-cli-tools
-    description: MsSQL ommand line prod tools repo
-    file: /etc/yum.repos.d/msprod.repo
-    baseurl: https://packages.microsoft.com/config/rhel/8/prod.repo
-    gpgkey: https://packages.microsoft.com/keys/microsoft.asc
-    gpgcheck: yes
+- name: Update package cache
+  yum:
+    update_cache: yes
+
+- name: Install Microsoft SQL Server
+  yum:
+    name: "{{ mssql_packages }}"
+    state: present
+
+- name: Microsoft SQL Repository
+  become: yes
+  command: sudo curl -o /etc/yum.repos.d/msprod.repo https://packages.microsoft.com/config/rhel/8/prod.repo
+
+- name: Remove older unixODBC files if performing upgrade
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ unixODBC_packages }}"
 
 - name: Update all packages
   yum:
     name: '*'
     state: latest
+
+- name: Install mssql-cli-tool via command with args
+  shell: ACCEPT_EULA=Y yum install mssql-tools -y
+  when: install_cli
+
+- name: Add mssql tools to .bashrc
+  lineinfile:
+    dest: "{{ ansible_user_dir}}/.bashrc"
+    state: present
+    line: 'export PATH="$PATH:/opt/mssql-tools/bin"'
+  when: install_cli
+
+- name: Add firewalld settings
+  firewalld:
+    zone: public
+    port: 1433/tcp
+    permanent: true
+    state: enabled
+  when: enable_iptables
+  notify: restart iptables

@@ -5,7 +5,6 @@ unixODBC_packages:
   - unixODBC-utf16-devel
 
 mssql_packages:
-  - unixODBC-devel
   - mssql-server
   - python-pip
   - python-devel
@@ -30,7 +29,7 @@ import_file: /Users/kylebenson/Documents/Work/Vagrant/centos/Load_DB.sql
 
 import_file_dest: /tmp/Load_DB.sql
 
-enable_iptables: false
+enable_iptables: true
 
-install_cli: false
+install_cli: true
 
