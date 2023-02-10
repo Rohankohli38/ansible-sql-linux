@@ -58,16 +58,24 @@
 
 - name: Add mssql tools to .bashrc
   lineinfile:
-    dest: "{{ ansible_user_dir}}/.bashrc"
+    dest: "{{ bashrc_file }}"
     state: present
     line: 'export PATH="$PATH:/opt/mssql-tools/bin"'
   when: install_cli
 
-- name: Add firewalld settings
-  firewalld:
-    zone: public
-    port: 1433/tcp
-    permanent: true
-    state: enabled
-  when: enable_iptables
-  notify: restart iptables
+- name: Stop any existing mssql-server
+  service:
+    name: mssql-server
+    state: stopped
+
+- name: Run mssql setup script
+  shell:  MSSQL_PID="{{edition}}" MSSQL_SA_PASSWORD="{{db_password}}" /opt/mssql/bin/mssql-conf -n setup accept-eula
+  become_user: root
+  register: setup_output
+  failed_when: "'Setup has completed successfully. SQL Server is now starting.' not in setup_output.stdout"
+
+- name: Stop any existing mssql-server
+  service:
+    name: mssql-server
+    state: started
+    enabled: yes

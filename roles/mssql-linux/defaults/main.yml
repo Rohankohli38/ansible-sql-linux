@@ -1,4 +1,5 @@
 ---
+bashrc_file: ~/.bashrc
 
 unixODBC_packages:
   - unixODBC-utf16
@@ -23,7 +24,7 @@ db_port: 1433
 
 db_user: ec2-user
 
-db_password: rootroot
+db_password: Kohli@38
 
 import_file: /Users/kylebenson/Documents/Work/Vagrant/centos/Load_DB.sql
 
