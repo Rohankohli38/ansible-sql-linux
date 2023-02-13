@@ -1,5 +1,10 @@
 ---
-bashrc_file: ~/.bashrc
+bashrc_file: ~/.bashrc_profile
+
+dependencies:
+  - curl
+  - gnupg2
+  - python3-pip
 
 unixODBC_packages:
   - unixODBC-utf16
@@ -18,17 +23,17 @@ edition: Developer
 
 db_name: testDB
 
-db_host: 127.0.0.1
+db_host: localhost
 
 db_port: 1433
 
-db_user: ec2-user
+db_user: sa
 
 db_password: Kohli@38
 
-import_file: /Users/kylebenson/Documents/Work/Vagrant/centos/Load_DB.sql
+filename_to_execute: "table.sql"
 
-import_file_dest: /tmp/Load_DB.sql
+filename_to_copy: "table.sql"
 
 enable_iptables: true
 
