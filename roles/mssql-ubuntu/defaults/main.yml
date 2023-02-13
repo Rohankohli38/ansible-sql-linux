@@ -21,15 +21,15 @@ end_user_license_aggreement_consent_cli: "YES" # Must be YES or NO in all caps w
 
 edition: Developer
 
-db_name: testDB
+db_name: "testDB"
 
-db_host: localhost
+db_host: "localhost"
 
 db_port: 1433
 
-db_user: sa
+db_user: "sa"
 
-db_password: Kohli@38
+db_password: "Kohli@38"
 
 filename_to_execute: "table.sql"
 

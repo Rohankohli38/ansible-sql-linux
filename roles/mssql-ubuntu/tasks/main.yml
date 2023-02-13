@@ -13,7 +13,7 @@
 
 - name: install mssql-server repo (Ubuntu)
   get_url:
-    url: "{{ mssql_repo_url_ubuntu }"
+    url: "{{ mssql_repo_url_ubuntu }}"
     dest: /etc/apt/sources.list.d/mssql-server.list
 
 - name: Update package cache
