@@ -1,5 +1,4 @@
 ---
-
 - debug:
     msg: "Check to see if EULA variables are accepted"
   failed_when: (end_user_license_aggreement_consent_server != "Y" )or (end_user_license_aggreement_consent_cli != "YES")
@@ -7,6 +6,7 @@
 - name: Install dependencies
   apt: 
     name: "{{ dependencies }}"
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Download the Microsoft SQL Server signing key
   shell: curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
@@ -15,18 +15,21 @@
   get_url:
     url: "{{ mssql_repo_url_ubuntu }}"
     dest: /etc/apt/sources.list.d/mssql-server.list
-
-- name: Update package cache
-  apt: update_cache=yes
-
-- name: Install pymssql for future playbooks against DB server
-  pip:
-    name: pymssql
-    state: present
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Install SQL Server
   apt:
     name: mssql-server
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Update package cache
+  apt: update_cache=yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install pymssql for future playbooks against DB server
+  pip:
+    name: pymssql
     state: present
 
 - name: Start SQL Server
@@ -48,9 +51,12 @@
   get_url:
     url: "{{ mssql_tool_url_ubuntu }}"
     dest: /etc/apt/sources.list.d/mssql-tools.list
+  when: ansible_distribution == 'Ubuntu'
+  when: install_cli
 
 - name: refresh apt-get cache for tools repo (Ubuntu)
   command: apt-get update
+  when: ansible_distribution == 'Ubuntu'
 
 - name: install mssql-tools package
   package:
@@ -58,6 +64,7 @@
     state: latest
   environment:
     ACCEPT_EULA: 'y'
+  when: install_cli
 
 - name: Add mssql tools to .bashrc
   lineinfile:
