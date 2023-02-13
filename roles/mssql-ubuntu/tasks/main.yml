@@ -13,7 +13,7 @@
 
 - name: install mssql-server repo (Ubuntu)
   get_url:
-    url: https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2022.list
+    url: "{{ mssql_repo_url_ubuntu }"
     dest: /etc/apt/sources.list.d/mssql-server.list
 
 - name: Update package cache
@@ -35,7 +35,7 @@
     state: stopped
 
 - name: Configure Microsoft SQL Server
-  shell:  MSSQL_PID=Developer MSSQL_SA_PASSWORD=Kohli@38 /opt/mssql/bin/mssql-conf -n setup accept-eula
+  shell:  MSSQL_PID="{{edition}}" MSSQL_SA_PASSWORD="{{db_password}}" /opt/mssql/bin/mssql-conf -n setup accept-eula
   become: yes
 
 - name: Start SQL Server
@@ -46,7 +46,7 @@
 
 - name: install mssql-tools repo (Ubuntu)
   get_url:
-    url: https://packages.microsoft.com/config/ubuntu/20.04/prod.list
+    url: "{{ mssql_tool_url_ubuntu }}"
     dest: /etc/apt/sources.list.d/mssql-tools.list
 
 - name: refresh apt-get cache for tools repo (Ubuntu)

@@ -39,3 +39,9 @@ enable_iptables: true
 
 install_cli: true
 
+
+#### UBUNTU VARIABLES ####
+
+mssql_repo_url_ubuntu: "https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2022.list"
+
+mssql_tool_url_ubuntu: "https://packages.microsoft.com/config/ubuntu/20.04/prod.list"
