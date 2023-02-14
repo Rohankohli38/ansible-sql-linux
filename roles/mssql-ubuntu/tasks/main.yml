@@ -11,6 +11,10 @@
 - name: Download the Microsoft SQL Server signing key
   shell: curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
+- name: Microsoft SQL Repository
+  command: curl -o /etc/yum.repos.d/mssql-server.repo https://packages.microsoft.com/config/rhel/8/mssql-server-2022.repo
+  when: ansible_distribution in ['CentOS', 'RedHat']
+  
 - name: install mssql-server repo (Ubuntu)
   get_url:
     url: "{{ mssql_repo_url_ubuntu }}"
@@ -21,7 +25,18 @@
   command: apt-get update
   when: ansible_distribution == 'Ubuntu'
 
-- name: Install SQL Server
+- name: Update package cache
+  yum:
+    update_cache: yes
+  when: ansible_distribution in ['CentOS', 'RedHat']
+  
+- name: Install Microsoft SQL Server on ['Centos', 'Redhat']
+  yum:
+    name: "{{ mssql_packages }}"
+    state: present
+  when: ansible_distribution in ['CentOS', 'RedHat']
+  
+- name: Install SQL Server on ['Ubuntu', 'Ubuntu']
   apt:
     name: mssql-server
     state: present
@@ -32,7 +47,7 @@
     name: pymssql
     state: present
 
-- name: Start SQL Server
+- name: Stop SQL Server
   service:
     name: mssql-server
     state: stopped
@@ -47,17 +62,35 @@
     state: started 
     enabled: yes
 
-- name: install mssql-tools repo (Ubuntu)
+- name: Install mssql-tools repo (Ubuntu)
   get_url:
     url: "{{ mssql_tool_url_ubuntu }}"
     dest: /etc/apt/sources.list.d/mssql-tools.list
   when: ansible_distribution == 'Ubuntu'
   when: install_cli
 
-- name: refresh apt-get cache for tools repo (Ubuntu)
+- name: Microsoft SQL-CLI-TOOLS Repository
+  become: yes
+  command: sudo curl -o /etc/yum.repos.d/msprod.repo https://packages.microsoft.com/config/rhel/8/prod.repo
+  when: ansible_distribution in ['CentOS', 'RedHat']
+  
+- name: Refresh apt-get cache for tools repo (Ubuntu)
   command: apt-get update
   when: ansible_distribution == 'Ubuntu'
 
+- name: Remove older unixODBC files if performing upgrade
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ unixODBC_packages }}"
+  when: ansible_distribution in ['CentOS', 'RedHat']
+  
+- name: Update all packages
+  yum:
+    name: '*'
+    state: latest
+  when: ansible_distribution in ['CentOS', 'RedHat']
+  
 - name: install mssql-tools package
   package:
     name: "{{ mssql_tool_packages }}"
