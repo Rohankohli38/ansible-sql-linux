@@ -1,5 +1,8 @@
 ---
-
+ 
+mssql_packages:   # For Redhat and Centos
+  - mssql-server
+  - python3-pip
 
 dependencies:
   - curl
