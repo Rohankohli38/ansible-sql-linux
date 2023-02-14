@@ -20,10 +20,10 @@
       name: mssql-ubuntu
       tasks_from: new_db
 
-  - name: Run import_db tasks to execute script inside mssql-server database
-    include_role:
-      name: mssql-ubuntu
-      tasks_from: import_db
+      #  - name: Run import_db tasks to execute script inside mssql-server database
+      #    include_role:
+      #      name: mssql-ubuntu
+      #      tasks_from: import_db
 
   - name: Run delete_db tasks to delete database inside mssql-server 
     include_role:

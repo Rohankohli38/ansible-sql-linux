@@ -1,5 +1,5 @@
 ---
-bashrc_file: ~/.bashrc_profile
+
 
 dependencies:
   - curl
@@ -10,10 +10,9 @@ unixODBC_packages:
   - unixODBC-utf16
   - unixODBC-utf16-devel
 
-mssql_packages:
-  - mssql-server
-  - python-pip
-  - python-devel
+mssql_tool_packages:
+  - mssql-tools
+  - unixodbc-dev
 
 end_user_license_aggreement_consent_server: Y # Must be Y or N
 

@@ -17,14 +17,14 @@
     dest: /etc/apt/sources.list.d/mssql-server.list
   when: ansible_distribution == 'Ubuntu'
 
+- name: refresh apt-get cache for server repo (Ubuntu)
+  command: apt-get update
+  when: ansible_distribution == 'Ubuntu'
+
 - name: Install SQL Server
   apt:
     name: mssql-server
     state: present
-  when: ansible_distribution == 'Ubuntu'
-
-- name: Update package cache
-  apt: update_cache=yes
   when: ansible_distribution == 'Ubuntu'
 
 - name: Install pymssql for future playbooks against DB server
@@ -60,7 +60,7 @@
 
 - name: install mssql-tools package
   package:
-    name: mssql-tools
+    name: "{{ mssql_tool_packages }}"
     state: latest
   environment:
     ACCEPT_EULA: 'y'
@@ -68,7 +68,8 @@
 
 - name: Add mssql tools to .bashrc
   lineinfile:
-    dest: "{{ ansible_user_dir}}/.bashrc"
+    path: /home/ubuntu/.bashrc
     state: present
     line: 'export PATH="$PATH:/opt/mssql-tools/bin"'
   when: install_cli
+
