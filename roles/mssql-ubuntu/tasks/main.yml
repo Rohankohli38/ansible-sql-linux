@@ -124,6 +124,6 @@
   when: ansible_distribution == 'Ubuntu'
 
 
-- name: refresh apt-get cache for server repo (Ubuntu)
+- name: Enable env var for ['CentOS', 'RedHat']
   shell: source /home/ec2-user/.bashrc
   when: ansible_distribution in ['CentOS', 'RedHat']
