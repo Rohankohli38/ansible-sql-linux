@@ -125,5 +125,8 @@
 
 
 - name: Enable env var for ['CentOS', 'RedHat']
-  shell: source /home/ec2-user/.bashrc
+  shell: source ~/.bashrc
   when: ansible_distribution in ['CentOS', 'RedHat']
+
+- name: Install required ansible collection
+  shell: ansible-galaxy collection install community.general

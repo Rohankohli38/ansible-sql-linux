@@ -15,15 +15,15 @@
       port: 1433
       timeout: 60
 
-  - name: Run new_db tasks to create database inside mssql-server
-    include_role:
-      name: mssql-ubuntu
-      tasks_from: new_db
+#  - name: Run new_db tasks to create database inside mssql-server
+#    include_role:
+#      name: mssql-ubuntu
+#      tasks_from: new_db
 
-      #  - name: Run import_db tasks to execute script inside mssql-server database
-      #    include_role:
-      #      name: mssql-ubuntu
-      #      tasks_from: import_db
+#  - name: Run import_db tasks to execute script inside mssql-server database
+#    include_role:
+#      name: mssql-ubuntu
+#      tasks_from: import_db
 
   - name: Run delete_db tasks to delete database inside mssql-server 
     include_role:
