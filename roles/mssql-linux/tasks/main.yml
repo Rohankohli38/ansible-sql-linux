@@ -114,7 +114,7 @@
     line: 'export PATH="$PATH:/opt/mssql-tools/bin"'
   when: install_cli
   when: ansible_distribution in ['CentOS', 'RedHat']
-  notify: update env
+  notify: update env redhat
 
 - name: Add mssql tools to .bashrc on Ubuntu
   lineinfile:
@@ -123,6 +123,7 @@
     line: 'export PATH="$PATH:/opt/mssql-tools/bin"'
   when: install_cli
   when: ansible_distribution == 'Ubuntu'
+  notify: update env ubuntu
 
 - name: Install required ansible collection
   shell: ansible-galaxy collection install community.general
