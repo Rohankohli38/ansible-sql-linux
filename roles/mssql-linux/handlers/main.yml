@@ -3,3 +3,6 @@
   service:
     name: firewalld
     state: reloaded
+
+- name: update env
+  shell: source /home/ec2-user/.bashrc
