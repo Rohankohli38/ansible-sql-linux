@@ -3,7 +3,7 @@
     msg: "Check to see if EULA variables are accepted"
   failed_when: (end_user_license_aggreement_consent_server != "Y" )or (end_user_license_aggreement_consent_cli != "YES")
 
-- name: Install dependencies
+- name: Install dependencies on Ubuntu
   apt: 
     name: "{{ dependencies }}"
   when: ansible_distribution == 'Ubuntu'
@@ -125,5 +125,15 @@
   when: ansible_distribution == 'Ubuntu'
   notify: update env ubuntu
 
+- name: Update all packages
+  yum:
+    name: '*'
+    state: latest
+  when: ansible_distribution in ['CentOS', 'RedHat']
+
 - name: Install required ansible collection
   shell: ansible-galaxy collection install community.general
+  
+- name: Refresh apt-get cache for tools repo (Ubuntu)
+  command: apt-get update
+  when: ansible_distribution == 'Ubuntu'  
