@@ -3,7 +3,6 @@
   hosts: localhost
   connection: local
   gather_facts: yes
-  become: yes
   tasks:
   - name: Run main task to install mssql-server
     include_role:
